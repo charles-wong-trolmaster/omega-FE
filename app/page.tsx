@@ -1,19 +1,22 @@
 'use client';
 
-import Login from '@/app/_container/Login';
-import OmegaForgot from '@/app/_container/OmegaForgot';
-import ResetPassword from '@/app/_container/ResetPassword';
-import SetUpOmega from '@/app/_container/SetUpOmega';
-import SignInTMPro from '@/app/_container/SignInTMPro';
-import SignUpEmail from '@/app/_container/SignUpEmail';
-import SignUpUser from '@/app/_container/SignUpUser';
-import SignUpVerify from '@/app/_container/SignUpVerify';
-import TMProForgot from '@/app/_container/TMProForgotPassword';
-import { Container } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import { useState } from 'react';
-import AllSet from './_container/AllSet';
-import JoinTrolMasterSetupOmega from './_container/JoinTrolMasterSetupOmega';
+import Login from "@/app/_container/Login";
+import OmegaForgot from "@/app/_container/OmegaForgot";
+import ResetPassword from "@/app/_container/ResetPassword";
+import SetUpOmega from "@/app/_container/SetUpOmega";
+import SignInTMPro from "@/app/_container/SignInTMPro";
+import SignUpEmail from "@/app/_container/SignUpEmail";
+import SignUpUser from "@/app/_container/SignUpUser";
+import SignUpVerify from "@/app/_container/SignUpVerify";
+import TMProForgot from "@/app/_container/TMProForgotPassword";
+import { useState } from "react";
+import JoinTrolMasterSetupOmega from "./_container/JoinTrolMasterSetupOmega";
+import AllSet from "./_container/AllSet";
+import Grid from "@mui/material/Grid";
+import { Container, InputLabel } from "@mui/material";
+import OmegaTextField from "@/components/OmegaTextfield";
+import SearchIcon from "@mui/icons-material/Search";
+import EmailIcon from "@mui/icons-material/Email";
 
 const LoginPage = () => {
 	const [activeComponent, setActiveComponent] = useState('login');
