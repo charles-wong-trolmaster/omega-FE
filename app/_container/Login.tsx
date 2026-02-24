@@ -1,8 +1,11 @@
 'use client';
 
+import OmegaPasswordField from '@/components/OmegaPasswordField';
+import OmegaTextField from '@/components/OmegaTextfield';
 import { useGetUnitPreferenceMutation, useLoginMutation } from '@/Redux/rtk-query/endpoints/auth/auth';
 import BusinessIcon from '@mui/icons-material/Business';
-import { FormControl, FormLabel, InputAdornment, TextField, Typography } from '@mui/material';
+import LockOutlineIcon from '@mui/icons-material/LockOutline';
+import { Typography } from '@mui/material';
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -89,53 +92,9 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 						<input className="uk-input uk-border-pill" placeholder="Company ID" type="text" {...register('companyId')} disabled={isLoggingIn} />
 					</div>
 
-					<FormControl fullWidth>
-						<FormLabel
-							sx={{
-								color: 'white',
-								mb: 1,
-								fontSize: '0.9rem'
-							}}
-						>
-							Company ID *
-						</FormLabel>
-						<TextField
-							placeholder="Company ID"
-							variant="outlined"
-							slotProps={{
-								input: {
-									startAdornment: (
-										<InputAdornment position="start">
-											<BusinessIcon sx={{ color: '#9e9e9e' }} />
-										</InputAdornment>
-									)
-								}
-							}}
-							sx={{
-								'& .MuiOutlinedInput-root': {
-									borderRadius: '50px',
-									backgroundColor: '#e8e8e8',
-									'& fieldset': {
-										border: 'none'
-									},
-									'&:hover fieldset': {
-										border: 'none'
-									},
-									'&.Mui-focused fieldset': {
-										border: 'none'
-									}
-								},
-								'& .MuiInputBase-input': {
-									color: '#666'
-								},
-								'& .MuiInputBase-input::placeholder': {
-									color: '#9e9e9e',
-									opacity: 1
-								}
-							}}
-						/>
-					</FormControl>
-					<div>test123</div>
+					<Typography variant="h6">Company ID *</Typography>
+					<OmegaTextField value={'32'} startIcon={<BusinessIcon />} size="small" fullWidth placeholder="xxxx" />
+					<OmegaPasswordField size="small" fullWidth startIcon={<LockOutlineIcon />} placeholder="password" />
 				</div>
 
 				<div className="uk-margin">
