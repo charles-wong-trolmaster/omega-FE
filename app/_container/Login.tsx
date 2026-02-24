@@ -135,6 +135,7 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 							}}
 						/>
 					</FormControl>
+					<div>test123</div>
 				</div>
 
 				<div className="uk-margin">
