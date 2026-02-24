@@ -1,12 +1,12 @@
 'use client';
 
-import {
-  useLoginMutation,
-  useGetUnitPreferenceMutation,
-} from "@/Redux/rtk-query/endpoints/auth/auth";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useGetUnitPreferenceMutation, useLoginMutation } from '@/Redux/rtk-query/endpoints/auth/auth';
+import BusinessIcon from '@mui/icons-material/Business';
+import { FormControl, FormLabel, InputAdornment, TextField, Typography } from '@mui/material';
+
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface LoginProps {
 	navigateTo: (component: string) => void;
@@ -21,11 +21,11 @@ interface LoginFormData {
 }
 
 const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
-  const [login, { isLoading: isLoggingIn }] = useLoginMutation();
-  const [getUnitPreference] = useGetUnitPreferenceMutation();
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+	const [login, { isLoading: isLoggingIn }] = useLoginMutation();
+	const [getUnitPreference] = useGetUnitPreferenceMutation();
+	const [showPassword, setShowPassword] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const router = useRouter();
 
 	const {
 		register,
@@ -49,30 +49,26 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 			password: data.password
 		};
 
-    try {
-      await login({ realm: data.companyId, ...loginData })
-        .unwrap()
-        .then(async (res) => {
-          window.sessionStorage.setItem("access_token", res.data.access_token);
-          window.sessionStorage.setItem(
-            "refresh_token",
-            res.data.refresh_token,
-          );
-          window.sessionStorage.setItem("realm", data.companyId);
+		try {
+			await login({ realm: data.companyId, ...loginData })
+				.unwrap()
+				.then(async (res) => {
+					window.sessionStorage.setItem('access_token', res.data.access_token);
+					window.sessionStorage.setItem('refresh_token', res.data.refresh_token);
+					window.sessionStorage.setItem('realm', data.companyId);
 
-          // Fetch unit preferences
-          try {
-            await getUnitPreference(data.companyId).unwrap();
-          } catch (err) {
-            console.error("Failed to fetch unit preferences:", err);
-          }
+					try {
+						await getUnitPreference(data.companyId).unwrap();
+					} catch (err) {
+						console.error('Failed to fetch unit preferences:', err);
+					}
 
-          router.push("adminPanel/facility");
-        });
-    } catch (err) {
-      setError("Username or password incorrect");
-    }
-  };
+					router.push('adminPanel/facility');
+				});
+		} catch (err) {
+			setError('Username or password incorrect');
+		}
+	};
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter' && isValid && !isLoggingIn) {
@@ -82,9 +78,9 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 
 	return (
 		<div className="uk-width-large" onKeyDown={handleKeyDown}>
-			<div className="uk-margin">
-				<h3 className="uk-margin-remove uk-h1 uk-text-bold uk-text-warning">Welcome to OMEGA</h3>
-			</div>
+			{/* <div variant="h3">Welcome to OMEGA</div> */}
+			<Typography variant="h3">Welcome to OMEGA</Typography>
+
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className="uk-margin">
 					<h5 className="uk-margin-xsmall-bottom uk-text-warning">Company ID *</h5>
@@ -92,6 +88,53 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 						<span className="uk-form-icon" uk-icon="icon: user"></span>
 						<input className="uk-input uk-border-pill" placeholder="Company ID" type="text" {...register('companyId')} disabled={isLoggingIn} />
 					</div>
+
+					<FormControl fullWidth>
+						<FormLabel
+							sx={{
+								color: 'white',
+								mb: 1,
+								fontSize: '0.9rem'
+							}}
+						>
+							Company ID *
+						</FormLabel>
+						<TextField
+							placeholder="Company ID"
+							variant="outlined"
+							slotProps={{
+								input: {
+									startAdornment: (
+										<InputAdornment position="start">
+											<BusinessIcon sx={{ color: '#9e9e9e' }} />
+										</InputAdornment>
+									)
+								}
+							}}
+							sx={{
+								'& .MuiOutlinedInput-root': {
+									borderRadius: '50px',
+									backgroundColor: '#e8e8e8',
+									'& fieldset': {
+										border: 'none'
+									},
+									'&:hover fieldset': {
+										border: 'none'
+									},
+									'&.Mui-focused fieldset': {
+										border: 'none'
+									}
+								},
+								'& .MuiInputBase-input': {
+									color: '#666'
+								},
+								'& .MuiInputBase-input::placeholder': {
+									color: '#9e9e9e',
+									opacity: 1
+								}
+							}}
+						/>
+					</FormControl>
 				</div>
 
 				<div className="uk-margin">
