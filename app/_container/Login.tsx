@@ -1,239 +1,185 @@
-"use client";
+'use client';
 
-import OmegaPasswordField from "@/components/OmegaPasswordField";
-import OmegaTextField from "@/components/OmegaTextfield";
-import {
-  useGetUnitPreferenceMutation,
-  useLoginMutation,
-} from "@/Redux/rtk-query/endpoints/auth/auth";
-import BusinessIcon from "@mui/icons-material/Business";
-import LockOutlineIcon from "@mui/icons-material/LockOutline";
-import { Typography } from "@mui/material";
-
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import OmegaButton from '@/components/OmegaButton';
+import OmegaCheckbox from '@/components/OmegaCheckbox';
+import OmegaPasswordField from '@/components/OmegaPasswordField';
+import OmegaTextField from '@/components/OmegaTextfield';
+import { useGetUnitPreferenceMutation, useLoginMutation } from '@/Redux/rtk-query/endpoints/auth/auth';
+import BusinessIcon from '@mui/icons-material/Business';
+import LockOutlineIcon from '@mui/icons-material/LockOutline';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import { Box, FormControl, Grid, Link, Stack, Typography } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface LoginProps {
-  navigateTo: (component: string) => void;
-  initialCompanyId?: string;
+	navigateTo: (component: string) => void;
+	initialCompanyId?: string;
 }
 
 interface LoginFormData {
-  companyId: string;
-  username: string;
-  password: string;
-  rememberMe: boolean;
+	companyId: string;
+	username: string;
+	password: string;
+	rememberMe: boolean;
 }
 
 const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
-  const [login, { isLoading: isLoggingIn }] = useLoginMutation();
-  const [getUnitPreference] = useGetUnitPreferenceMutation();
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+	const [login, { isLoading: isLoggingIn }] = useLoginMutation();
+	const [getUnitPreference] = useGetUnitPreferenceMutation();
+	const [checked, setChecked] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
+	function handleClick() {
+		setLoading(true);
+	}
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isValid },
-  } = useForm<LoginFormData>({
-    mode: "onSubmit",
-    defaultValues: {
-      companyId: "cus_00000",
-      username: "charles@trolmaster.com",
-      password: "P@ssw0rd!",
-      rememberMe: false,
-    },
-  });
+	const [error, setError] = useState<string | null>(null);
+	const router = useRouter();
 
-  const onSubmit = async (data: LoginFormData) => {
-    setError(null);
+	const {
+		register,
+		handleSubmit,
+		formState: { isValid }
+	} = useForm<LoginFormData>({
+		mode: 'onSubmit',
+		defaultValues: {
+			companyId: 'cus_00000',
+			username: 'charles@trolmaster.com',
+			password: 'P@ssw0rd!',
+			rememberMe: false
+		}
+	});
 
-    const loginData = {
-      username: data.username,
-      password: data.password,
-    };
+	const onSubmit = async (data: LoginFormData) => {
+		setError(null);
 
-    try {
-      await login({ realm: data.companyId, ...loginData })
-        .unwrap()
-        .then(async (res) => {
-          window.sessionStorage.setItem("access_token", res.data.access_token);
-          window.sessionStorage.setItem(
-            "refresh_token",
-            res.data.refresh_token,
-          );
-          window.sessionStorage.setItem("realm", data.companyId);
+		const loginData = {
+			username: data.username,
+			password: data.password
+		};
 
-          try {
-            await getUnitPreference(data.companyId).unwrap();
-          } catch (err) {
-            console.error("Failed to fetch unit preferences:", err);
-          }
+		try {
+			await login({ realm: data.companyId, ...loginData })
+				.unwrap()
+				.then(async (res) => {
+					window.sessionStorage.setItem('access_token', res.data.access_token);
+					window.sessionStorage.setItem('refresh_token', res.data.refresh_token);
+					window.sessionStorage.setItem('realm', data.companyId);
 
-          router.push("adminPanel/facility");
-        });
-    } catch (err) {
-      setError("Username or password incorrect");
-    }
-  };
+					try {
+						await getUnitPreference(data.companyId).unwrap();
+					} catch (err) {
+						console.error('Failed to fetch unit preferences:', err);
+					}
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && isValid && !isLoggingIn) {
-      handleSubmit(onSubmit)();
-    }
-  };
+					router.push('adminPanel/facility');
+				});
+		} catch (err) {
+			setError('Username or password incorrect');
+		}
+	};
 
-  return (
-    <div className="uk-width-large" onKeyDown={handleKeyDown}>
-      {/* <div variant="h3">Welcome to OMEGA</div> */}
-      <Typography variant="h1" sx={{ color: "white" }}>
-        Welcome to OMEGA
-      </Typography>
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === 'Enter' && isValid && !isLoggingIn) {
+			handleSubmit(onSubmit)();
+		}
+	};
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="uk-margin">
-          <h5 className="uk-margin-xsmall-bottom uk-text-warning">
-            Company ID *
-          </h5>
-          <div className="uk-inline uk-width-1-1">
-            <span className="uk-form-icon" uk-icon="icon: user"></span>
-            <input
-              className="uk-input uk-border-pill"
-              placeholder="Company ID"
-              type="text"
-              {...register("companyId")}
-              disabled={isLoggingIn}
-            />
-          </div>
+	return (
+		<Box sx={{ paddingTop: '80px', width: '100%' }} onKeyDown={handleKeyDown}>
+			{/* <Box variant="h3">Welcome to OMEGA</Box> */}
+			<img src="/img/trolmasterLogo.svg" alt="" />
+			<Box sx={{ margin: '30px 0px ' }}>
+				<Typography sx={{ fontWeight: 'bold' }} variant="h1">
+					Welcome to
+				</Typography>
+				<Typography sx={{ textTransform: 'uppercase', fontWeight: 'bold' }} variant="h1">
+					omega
+				</Typography>
+			</Box>
+			<FormControl onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
+				<Stack spacing={5}>
+					<Box>
+						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
+							Company ID *
+						</Typography>
+						<OmegaTextField value={''} startIcon={<BusinessIcon />} size="small" fullWidth placeholder="Company ID" />
+					</Box>
+					<Box>
+						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
+							Email *
+						</Typography>
+						<OmegaTextField value={''} startIcon={<MailOutlineIcon />} size="small" fullWidth placeholder="Email" />
+					</Box>
+					<Box>
+						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
+							Password *
+						</Typography>
+						<OmegaPasswordField size="small" fullWidth startIcon={<LockOutlineIcon />} placeholder="Password" />
+					</Box>
+				</Stack>
 
-          <Typography variant="h6">Company ID *</Typography>
-          <OmegaTextField
-            value={"32"}
-            startIcon={<BusinessIcon />}
-            size="small"
-            fullWidth
-            placeholder="xxxx"
-          />
-          <OmegaPasswordField
-            size="small"
-            fullWidth
-            startIcon={<LockOutlineIcon />}
-            placeholder="password"
-          />
-          <div>Hi</div>
-        </div>
+				<Box sx={{ margin: '20px 0px' }}>
+					<OmegaCheckbox label="Stay logged in" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+				</Box>
 
-        <div className="uk-margin">
-          <h5 className="uk-margin-xsmall-bottom  uk-text-warning">Email *</h5>
-          <div className="uk-inline uk-width-1-1">
-            <span className="uk-form-icon" uk-icon="icon: mail"></span>
-            <input
-              className="uk-input uk-border-pill"
-              placeholder="E-mail Address / Username"
-              type="text"
-              {...register("username", { required: true })}
-              disabled={isLoggingIn}
-              autoComplete="username"
-            />
-          </div>
-        </div>
+				<Box>
+					<OmegaButton omegaVariant="confirm" fullWidth size="small" loading={loading} loadingPosition="start" onClick={handleClick}>
+						Confirm
+					</OmegaButton>
+					{/* <OmegaButton omegaVariant="back" fullWidth onClick={handleClick}>
+						Back
+					</OmegaButton> */}
+				</Box>
 
-        <div className="uk-margin">
-          <h5 className="uk-margin-xsmall-bottom uk-text-warning">
-            Password *
-          </h5>
-          <div className="uk-inline uk-width-1-1">
-            <span className="uk-form-icon" uk-icon="icon: lock"></span>
-            <a
-              className="uk-form-icon uk-form-icon-flip"
-              uk-icon={`icon: ${showPassword ? "eye-slash" : "eye"}`}
-              onClick={() => {
-                if (!isLoggingIn) setShowPassword(!showPassword);
-              }}
-              style={{ cursor: isLoggingIn ? "not-allowed" : "pointer" }}
-            ></a>
-            <input
-              className={`uk-input uk-border-pill ${error ? "uk-form-danger" : ""}`}
-              placeholder="Password"
-              type={showPassword ? "text" : "password"}
-              {...register("password", {
-                required: true,
-                onChange: () => setError(null),
-              })}
-              disabled={isLoggingIn}
-              autoComplete="current-password"
-            />
-          </div>
-          {error && (
-            <div className="uk-text-danger uk-text-small uk-margin-small-top">
-              {error}
-            </div>
-          )}
-        </div>
+				<Link
+					component="button"
+					variant="body2"
+					onClick={(e) => {
+						e.preventDefault();
+						navigateTo('forgot');
+					}}
+					sx={{ fontSize: '16px', textAlign: 'left', margin: '30px 0px ' }}
+				>
+					Forgot Company ID / Password?
+				</Link>
 
-        <div className="uk-margin-small">
-          <label className="uk-text-small uk-text-warning uk-text-bold uk-flex uk-flex-middle">
-            <input
-              className="uk-checkbox uk-border-pill uk-margin-remove "
-              type="checkbox"
-              {...register("rememberMe")}
-              disabled={isLoggingIn}
-            />
-            <span className="uk-text-warning uk-margin-small-left">
-              Stay logged in
-            </span>
-          </label>
-        </div>
+				<hr />
 
-        <div className="uk-margin">
-          <button
-            className="uk-button uk-button-secondary uk-button-large uk-width-1-1 uk-border-pill"
-            type="submit"
-            disabled={!isValid || isLoggingIn}
-          >
-            {isLoggingIn ? <div uk-spinner="ratio: 0.6"></div> : "Log In"}
-          </button>
-        </div>
-
-        <div className="uk-text-left uk-margin-small">
-          <a
-            href="#"
-            className="uk-h4 uk-text-bold uk-text-warning"
-            onClick={(e) => {
-              e.preventDefault();
-              navigateTo("forgot");
-            }}
-          >
-            Forgot Company ID / Password?
-          </a>
-        </div>
-
-        <hr className="uk-margin uk-text-muted" />
-
-        <div>
-          <p className="uk-h2 uk-text-bolder uk-text-warning">New User?</p>
-          <div>
-            <span className="uk-h4 uk-text-bold uk-text-warning uk-margin-small-right">
-              Don't have an account?
-            </span>
-            <button
-              className="uk-button uk-button-secondary uk-button-large uk-border-pill"
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                navigateTo("signUpUser");
-              }}
-              disabled={isLoggingIn}
-            >
-              Sign Up Here
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  );
+				<Box>
+					<Typography variant="h2" sx={{ fontWeight: 'bold', marginTop: '30px' }}>
+						New User?
+					</Typography>
+					<Box>
+						<Grid container spacing={2} sx={{ alignItems: 'center' }}>
+							<Grid size={6}>
+								<Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+									Don't have an account?
+								</Typography>
+							</Grid>
+							<Grid size={6}>
+								<OmegaButton
+									omegaVariant="confirm"
+									fullWidth
+									size="small"
+									loading={false}
+									loadingPosition="start"
+									onClick={(e) => {
+										e.preventDefault();
+										navigateTo('signUpUser');
+									}}
+									disabled={isLoggingIn}
+								>
+									Sign Up Here
+								</OmegaButton>
+							</Grid>
+						</Grid>
+					</Box>
+				</Box>
+			</FormControl>
+		</Box>
+	);
 };
 
 export default Login;
