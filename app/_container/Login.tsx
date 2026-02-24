@@ -95,6 +95,7 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 					<Typography variant="h6">Company ID *</Typography>
 					<OmegaTextField value={'32'} startIcon={<BusinessIcon />} size="small" fullWidth placeholder="xxxx" />
 					<OmegaPasswordField size="small" fullWidth startIcon={<LockOutlineIcon />} placeholder="password" />
+					<div>Hi</div>
 				</div>
 
 				<div className="uk-margin">
