@@ -1,63 +1,67 @@
-import { ReduxProvider } from '@/Redux/providers/ReduxProvider';
-import type { Metadata, Viewport } from 'next';
-import "./globals.css"
+import { ReduxProvider } from "@/Redux/providers/ReduxProvider";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+import type { Metadata, Viewport } from "next";
+import "@/styles/globals.css";
+import { ThemeProvider } from "@mui/material/styles";
+import { theme } from "@/styles/theme";
+import { Montserrat } from "next/font/google";
 
 export const metadata: Metadata = {
-	title: 'Omega',
-	description: 'Omega',
-	// Remove this line since you're using manifest.ts now
-	// manifest: "/manifest.json",
-	appleWebApp: {
-		capable: true,
-		statusBarStyle: 'black-translucent',
-		title: 'Omega'
-	},
-	formatDetection: {
-		telephone: false
-	},
-	other: {
-		'mobile-web-app-capable': 'yes',
-		'apple-mobile-web-app-capable': 'yes',
-		'apple-mobile-web-app-status-bar-style': 'black-translucent'
-	}
+  title: "Omega",
+  description: "Omega",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Omega",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
+  },
 };
 
-// Add viewport configuration for PWA
 export const viewport: Viewport = {
-	width: 'device-width',
-	initialScale: 1,
-	maximumScale: 1,
-	userScalable: false,
-	viewportFit: 'cover',
-	themeColor: '#000000'
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: "#000000",
 };
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+});
 
 export default function RootLayout({
-	children
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<html lang="en">
-			<head>
-				{/* Additional PWA meta tags */}
-				<meta name="theme-color" content="#000000" />
-			</head>
-			<body
-				// className="uk-height-viewport"
-				style={{
-					margin: 0,
-					padding: 0,
-					width: '100vw',
-					height: '100vh',
-					backgroundColor: '#000000',
-					minWidth: 'px'
-				}}
-			>
-				<ReduxProvider>
-					{children}
-				</ReduxProvider>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="en" className={montserrat.variable}>
+      <head>
+        <meta name="theme-color" content="#000000" />
+      </head>
+      <body
+        style={{
+          margin: 0,
+          padding: 0,
+          width: "100vw",
+          height: "100vh",
+        }}
+      >
+        <ReduxProvider>
+          <AppRouterCacheProvider>
+            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          </AppRouterCacheProvider>
+        </ReduxProvider>
+      </body>
+    </html>
+  );
 }
