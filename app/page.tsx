@@ -12,8 +12,11 @@ import TMProForgot from "@/app/_container/TMProForgotPassword";
 import { useState } from "react";
 import JoinTrolMasterSetupOmega from "./_container/JoinTrolMasterSetupOmega";
 import AllSet from "./_container/AllSet";
-import Grid from "@mui/material/Grid"
-import { Container } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import { Container, InputLabel } from "@mui/material";
+import OmegaTextField from "@/components/OmegaTextfield";
+import SearchIcon from "@mui/icons-material/Search";
+import EmailIcon from "@mui/icons-material/Email";
 
 const LoginPage = () => {
   const [activeComponent, setActiveComponent] = useState("login");
@@ -75,18 +78,25 @@ const LoginPage = () => {
   return (
     <div className="login-background">
       <Grid container spacing={2}>
+        <Grid size={4}>123</Grid>
         <Grid size={4}>
-123
-        </Grid>
-        <Grid size={4}>
-          <Container style={{display: "flex",  justifyContent: "center"}}>
-            123423
+          <Container>
+            <OmegaTextField
+              label="Search"
+              startIcon={<SearchIcon />}
+              size="small"
+              fullWidth
+            />
+            <OmegaTextField
+              label="Email"
+              startIcon={<EmailIcon fontSize="small" />}
+              size="small"
+              fullWidth
+            />
+            <OmegaTextField label="First Name" fullWidth size="small" />
           </Container>
         </Grid>
-        <Grid size={4}>
-123
-        </Grid>
-
+        <Grid size={4}>123</Grid>
       </Grid>
     </div>
   );
