@@ -41,6 +41,13 @@ let theme = createTheme({
 
 export default theme = createTheme(theme, {
   components: {
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          color: theme.palette.primary.contrastText,
+        },
+      },
+    },
     MuiTextField: {
       styleOverrides: {
         root: {
