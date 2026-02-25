@@ -32,6 +32,7 @@ export default function OmegaCheckbox({ label, ...props }: OmegaCheckboxProps) {
                     icon={<RadioButtonUncheckedIcon />}
                     checkedIcon={<CheckCircleIcon />}
                     {...props}
+                    
                 />
             }
             label={label ?? ''}

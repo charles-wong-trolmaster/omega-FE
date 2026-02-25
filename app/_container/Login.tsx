@@ -1,6 +1,5 @@
 'use client';
 
-import OmegaButton from '@/components/OmegaButton';
 import OmegaCheckbox from '@/components/OmegaCheckbox';
 import OmegaPasswordField from '@/components/OmegaPasswordField';
 import OmegaTextField from '@/components/OmegaTextfield';
@@ -8,10 +7,10 @@ import { useGetUnitPreferenceMutation, useLoginMutation } from '@/Redux/rtk-quer
 import BusinessIcon from '@mui/icons-material/Business';
 import LockOutlineIcon from '@mui/icons-material/LockOutline';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import { Box, FormControl, Grid, Link, Stack, Typography } from '@mui/material';
+import { Box, Button, Grid, Link, Stack, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 interface LoginProps {
 	navigateTo: (component: string) => void;
@@ -28,39 +27,27 @@ interface LoginFormData {
 const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 	const [login, { isLoading: isLoggingIn }] = useLoginMutation();
 	const [getUnitPreference] = useGetUnitPreferenceMutation();
-	const [checked, setChecked] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(false);
-	function handleClick() {
-		setLoading(true);
-	}
-
 	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
 
 	const {
-		register,
+		control,
 		handleSubmit,
-		formState: { isValid }
+		formState: { isValid, errors }
 	} = useForm<LoginFormData>({
-		mode: 'onSubmit',
+		mode: 'onChange',
 		defaultValues: {
-			companyId: 'cus_00000',
-			username: 'charles@trolmaster.com',
-			password: 'P@ssw0rd!',
+			companyId: initialCompanyId ?? '',
+			username: '',
+			password: '',
 			rememberMe: false
 		}
 	});
 
 	const onSubmit = async (data: LoginFormData) => {
 		setError(null);
-
-		const loginData = {
-			username: data.username,
-			password: data.password
-		};
-
 		try {
-			await login({ realm: data.companyId, ...loginData })
+			await login({ realm: data.companyId, username: data.username, password: data.password })
 				.unwrap()
 				.then(async (res) => {
 					window.sessionStorage.setItem('access_token', res.data.access_token);
@@ -88,9 +75,8 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 
 	return (
 		<Box sx={{ paddingTop: '80px', width: '100%' }} onKeyDown={handleKeyDown}>
-			{/* <Box variant="h3">Welcome to OMEGA</Box> */}
 			<img src="/img/trolmasterLogo.svg" alt="" />
-			<Box sx={{ margin: '30px 0px ' }}>
+			<Box sx={{ margin: '30px 0px' }}>
 				<Typography sx={{ fontWeight: 'bold' }} variant="h1">
 					Welcome to
 				</Typography>
@@ -98,49 +84,72 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 					omega
 				</Typography>
 			</Box>
-			<FormControl onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
+
+			<Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
 				<Stack spacing={5}>
 					<Box>
 						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
 							Company ID *
 						</Typography>
-						<OmegaTextField value={''} startIcon={<BusinessIcon />} size="small" fullWidth placeholder="Company ID" />
+						<Controller name="companyId" control={control} rules={{ required: 'Company ID is required' }} render={({ field }) => <OmegaTextField {...field} startIcon={<BusinessIcon />} size="small" fullWidth placeholder="Company ID" error={!!errors.companyId} helperText={errors.companyId?.message} />} />
 					</Box>
 					<Box>
 						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
 							Email *
 						</Typography>
-						<OmegaTextField value={''} startIcon={<MailOutlineIcon />} size="small" fullWidth placeholder="Email" />
+						<Controller
+							name="username"
+							control={control}
+							rules={{
+								required: 'Email is required',
+								pattern: {
+									value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+									message: 'Invalid email address'
+								}
+							}}
+							render={({ field }) => <OmegaTextField {...field} startIcon={<MailOutlineIcon />} size="small" fullWidth placeholder="Email" error={!!errors.username} helperText={errors.username?.message} />}
+						/>
 					</Box>
 					<Box>
 						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
 							Password *
 						</Typography>
-						<OmegaPasswordField size="small" fullWidth startIcon={<LockOutlineIcon />} placeholder="Password" />
+						<Controller name="password" control={control} rules={{ required: 'Password is required' }} render={({ field }) => <OmegaPasswordField {...field} size="small" fullWidth startIcon={<LockOutlineIcon />} placeholder="Password" error={!!errors.password} helperText={errors.password?.message} />} />
 					</Box>
 				</Stack>
 
 				<Box sx={{ margin: '20px 0px' }}>
-					<OmegaCheckbox label="Stay logged in" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+					<Controller name="rememberMe" control={control} render={({ field }) => <OmegaCheckbox label="Stay logged in" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />} />
 				</Box>
 
+				{error && (
+					<Typography color="error" sx={{ marginBottom: '10px', fontSize: '0.9rem' }}>
+						{error}
+					</Typography>
+				)}
+
 				<Box>
-					<OmegaButton omegaVariant="confirm" fullWidth size="small" loading={loading} loadingPosition="start" onClick={handleClick}>
+					<Button
+						variant="contained"
+						color="success"
+						type="submit"
+						fullWidth
+						loading={isLoggingIn}
+						// disabled={!isValid || isLoggingIn}
+					>
 						Confirm
-					</OmegaButton>
-					{/* <OmegaButton omegaVariant="back" fullWidth onClick={handleClick}>
-						Back
-					</OmegaButton> */}
+					</Button>
 				</Box>
 
 				<Link
 					component="button"
+					type="button"
 					variant="body2"
 					onClick={(e) => {
 						e.preventDefault();
 						navigateTo('forgot');
 					}}
-					sx={{ fontSize: '16px', textAlign: 'left', margin: '30px 0px ' }}
+					sx={{ fontSize: '16px', textAlign: 'left', margin: '30px 0px' }}
 				>
 					Forgot Company ID / Password?
 				</Link>
@@ -151,33 +160,32 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
 					<Typography variant="h2" sx={{ fontWeight: 'bold', marginTop: '30px' }}>
 						New User?
 					</Typography>
-					<Box>
-						<Grid container spacing={2} sx={{ alignItems: 'center' }}>
-							<Grid size={6}>
-								<Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-									Don't have an account?
-								</Typography>
-							</Grid>
-							<Grid size={6}>
-								<OmegaButton
-									omegaVariant="confirm"
-									fullWidth
-									size="small"
-									loading={false}
-									loadingPosition="start"
-									onClick={(e) => {
-										e.preventDefault();
-										navigateTo('signUpUser');
-									}}
-									disabled={isLoggingIn}
-								>
-									Sign Up Here
-								</OmegaButton>
-							</Grid>
+					<Grid container spacing={2} sx={{ alignItems: 'center' }}>
+						<Grid size={6}>
+							<Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+								Don't have an account?
+							</Typography>
 						</Grid>
-					</Box>
+						<Grid size={6}>
+							<Button
+								variant="contained"
+								color="success"
+								fullWidth
+								size="small"
+								type="button"
+								loading={false}
+								disabled={isLoggingIn}
+								onClick={(e) => {
+									e.preventDefault();
+									navigateTo('signUpUser');
+								}}
+							>
+								Sign Up Here
+							</Button>
+						</Grid>
+					</Grid>
 				</Box>
-			</FormControl>
+			</Box>
 		</Box>
 	);
 };
