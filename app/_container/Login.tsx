@@ -215,12 +215,11 @@ const Login: React.FC<LoginProps> = ({ navigateTo, initialCompanyId }) => {
         <Link
           component="button"
           type="button"
-          variant="body2"
-          onClick={(e) => {
-            e.preventDefault();
+          variant="h4"
+          onClick={() => {
             navigateTo("forgot");
           }}
-          sx={{ fontSize: "16px", textAlign: "left", margin: "30px 0px" }}
+          sx={{ margin: "30px 0px" }}
         >
           Forgot Company ID / Password?
         </Link>
