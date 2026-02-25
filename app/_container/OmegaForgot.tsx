@@ -1,73 +1,124 @@
 'use client';
 
+import OmegaSwitcher from '@/components/OmegaSwitcher';
+import OmegaTextField from '@/components/OmegaTextfield';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import { Box, Button, Link, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 interface ForgotProps {
 	navigateTo: (component: string) => void;
 }
 
+interface ForgotFormData {
+	email: string;
+}
+
 const OmegaForgotPassword: React.FC<ForgotProps> = ({ navigateTo }) => {
-	const [activeTab, setActiveTab] = useState('company');
+	// ✅ Merged activeTab & loginMethod into one state — they were doing the same thing
+	const [activeTab, setActiveTab] = useState<'companyId' | 'password'>('companyId');
+
+	const {
+		control,
+		handleSubmit,
+		formState: { isValid, errors }
+	} = useForm<ForgotFormData>({
+		mode: 'onChange',
+		defaultValues: {
+			email: ''
+		}
+	});
+
+	const onSubmit = async (data: ForgotFormData) => {
+		// TODO: handle forgot companyId / password
+		console.log(activeTab, data);
+	};
 
 	return (
-		<div className="uk-width-large">
-			<h1 className="uk-h1 uk-text-bold uk-text-warning">Forgot</h1>
+		<Box sx={{ paddingTop: '80px', width: '100%' }}>
+			<img src="/img/trolmasterLogo.svg" alt="" />
 
-			<div className="uk-margin-bottom uk-grid-collapse uk-child-width-1-2 uk-background-primary uk-border-pill uk-text-warning" uk-grid="true">
-				<div>
-					<button onClick={() => setActiveTab('company')} className={`uk-button uk-border-pill uk-width-1-1 ${activeTab === 'company' ? 'uk-button-secondary' : 'uk-background-primary'}`}>
-						COMPANY ID
-					</button>
-				</div>
-				<div>
-					<button onClick={() => setActiveTab('password')} className={`uk-button uk-border-pill uk-width-1-1 ${activeTab === 'password' ? 'uk-button-secondary' : 'uk-background-primary'}`}>
-						PASSWORD
-					</button>
-				</div>
-			</div>
+			<Box sx={{ margin: '30px 0px' }}>
+				<Typography sx={{ fontWeight: 'bold' }} variant="h1">
+					Forgot
+				</Typography>
+			</Box>
 
-			<div>
-				<p className="uk-margin uk-text-warning uk-text-bold">
-					Please provide the email address that you used when signed up for your account. If you forgot your email. Please{' '}
-					<a href="#" className="uk-text-secondary">
-						<u>contact us</u>
-					</a>
-					.
-				</p>
+			{/* Switcher */}
+			<Box sx={{ marginBottom: '30px' }}>
+				<OmegaSwitcher
+					options={[
+						{ label: 'Company ID', value: 'companyId' },
+						{ label: 'Password', value: 'password' }
+					]}
+					value={activeTab}
+					onChange={(val) => setActiveTab(val)}
+				/>
+			</Box>
 
-				<div className="uk-margin">
-					<h5 className="uk-text-warning uk-margin-xsmall-bottom">Email *</h5>
-					<div className="uk-inline uk-width-1-1 ">
-						<span className="uk-form-icon" uk-icon="icon: mail"></span>
-						<input className="uk-input uk-border-pill" placeholder="Email" type="email" />
-					</div>
-				</div>
+			<Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
+				<Stack spacing={5}>
+					{/* Description */}
+					<Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+						Please provide the email address that you used when signed up for your account. If you forgot your email, please{' '}
+						<Link href="#" underline="always">
+							contact us
+						</Link>
+						.
+					</Typography>
 
-				<p className="uk-margin uk-text-warning uk-text-bold">{`${activeTab === 'company' ? 'We have sent your Company ID to the email address you provided.' : 'You will receive a link create a new password via e-mail.'} `}</p>
+					{/* Email Field */}
+					<Box>
+						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
+							Email *
+						</Typography>
+						<Controller
+							name="email"
+							control={control}
+							rules={{
+								required: 'Email is required',
+								pattern: {
+									value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+									message: 'Invalid email address'
+								}
+							}}
+							render={({ field }) => <OmegaTextField {...field} startIcon={<MailOutlineIcon />} size="small" fullWidth placeholder="Email" error={!!errors.email} helperText={errors.email?.message} />}
+						/>
+					</Box>
 
-				<div>
-					<button
-						className="uk-button uk-button-secondary uk-button-large uk-width-1-1 uk-border-pill"
-						onClick={(e) => {
-							e.preventDefault();
-						}}
+					{/* Dynamic message based on active tab */}
+					<Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+						{activeTab === 'companyId' ? 'We have sent your Company ID to the email address you provided.' : 'You will receive a link to create a new password via e-mail.'}
+					</Typography>
+				</Stack>
+
+				{/* Buttons */}
+				<Stack spacing={2} sx={{ marginTop: '30px' }}>
+					<Button
+						variant="contained"
+						color="success"
+						fullWidth
+						type="submit"
+
+						// disabled={!isValid}
 					>
 						Confirm
-					</button>
-				</div>
-				<div className="uk-margin">
-					<button
-						className="uk-button uk-button-primary uk-button-large uk-width-1-1 uk-border-pill"
+					</Button>
+					<Button
+						variant="contained"
+						fullWidth
+						type="button"
 						onClick={(e) => {
 							e.preventDefault();
 							navigateTo('login');
 						}}
 					>
 						Back
-					</button>
-				</div>
-			</div>
-		</div>
+					</Button>
+				</Stack>
+			</Box>
+		</Box>
 	);
 };
 
