@@ -1,9 +1,9 @@
 import { ReduxProvider } from "@/Redux/providers/ReduxProvider";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "@/styles/theme";
+import theme from "@/styles/theme";
 import { Montserrat } from "next/font/google";
 
 export const metadata: Metadata = {
@@ -22,15 +22,6 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
-};
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: "cover",
-  themeColor: "#000000",
 };
 
 const montserrat = Montserrat({
