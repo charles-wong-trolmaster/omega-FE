@@ -28,10 +28,10 @@ const LoginPage = () => {
 			case 'signUpBoth':
 			case 'signInTMPro':
 			case 'allSet':
-				return 720;
+				return 820;
 
 			default:
-				return 450;
+				return 430;
 		}
 	};
 
@@ -66,7 +66,7 @@ const LoginPage = () => {
 
 	return (
 		<div className="login-background">
-			<Container sx={{ paddingTop: '80px', paddingBottom: '80px' }}>
+			<Container sx={{ paddingTop: '50px', paddingBottom: '50px' }}>
 				<Box sx={{ maxWidth: getComponentMaxWidth(), mx: 'auto', width: '100%' }}>
 					<Stack spacing={5}>
 						<Box>

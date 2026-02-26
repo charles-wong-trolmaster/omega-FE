@@ -126,7 +126,7 @@ const JoinTrolMasterSetupOmega: React.FC<JoinTrolMasterSetupOmegaProps> = ({ nav
 			</Box>
 
 			<Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
-				<Stack spacing={5}>
+				<Stack spacing={2}>
 					<Box>
 						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
 							Email *
@@ -215,7 +215,7 @@ const JoinTrolMasterSetupOmega: React.FC<JoinTrolMasterSetupOmegaProps> = ({ nav
 					</Box>
 				</Stack>
 
-				<Box sx={{ margin: '40px 0px 20px 0px', display: 'flex', alignItems: 'flex-start' }}>
+				<Box sx={{ margin: '30px 0px 20px 0px', display: 'flex', alignItems: 'flex-start' }}>
 					<Controller name="privacyConsent" control={control} rules={{ required: 'You must accept the privacy policy' }} render={({ field }) => <OmegaCheckbox sx={{ paddingTop: '0px' }} checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />} />
 					<Box>
 						<Typography variant="h4" sx={{ fontWeight: 'bold' }}>
@@ -233,7 +233,7 @@ const JoinTrolMasterSetupOmega: React.FC<JoinTrolMasterSetupOmegaProps> = ({ nav
 					</Box>
 				</Box>
 
-				<Box sx={{ margin: '20px 0px 40px 0px', display: 'flex', alignItems: 'flex-start' }}>
+				<Box sx={{ margin: '20px 0px 30px 0px', display: 'flex', alignItems: 'flex-start' }}>
 					<Controller name="marketingConsent" control={control} rules={{ required: 'You must accept the privacy policy' }} render={({ field }) => <OmegaCheckbox sx={{ paddingTop: '0px' }} checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />} />
 					<Box>
 						<Typography variant="h4" sx={{ fontWeight: 'bold' }}>
