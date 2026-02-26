@@ -15,7 +15,7 @@ import AllSet from './_container/AllSet';
 import JoinTrolMasterSetupOmega from './_container/JoinTrolMasterSetupOmega';
 
 const LoginPage = () => {
-	const [activeComponent, setActiveComponent] = useState('setUpVerify');
+	const [activeComponent, setActiveComponent] = useState('login');
 	const [registerData, setRegisterData] = useState<any>(null);
 	const [initialCompanyId, setInitialCompanyId] = useState<string>('');
 
