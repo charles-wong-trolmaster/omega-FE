@@ -8,7 +8,7 @@ export interface PageParam {
 export const growRoomClient = createApi({
   reducerPath: "authClient",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://omega.dev.trolmaster.com",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
     prepareHeaders: (headers) => {
       // This function runs on each request, in the browser
       if (typeof window !== "undefined") {

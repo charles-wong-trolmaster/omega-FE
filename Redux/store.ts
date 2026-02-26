@@ -6,6 +6,7 @@ import errorDialogReducer from "./features/error/errorDialogSlice";
 import { cultivationClient } from "./rtk-query/cultivationClient";
 import { rtkQueryErrorMiddleware } from "./rtk-query/middleware/ErrorMiddleware";
 import { growRoomClient } from "./rtk-query/growRoomClient";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +21,8 @@ export const store = configureStore({
       .concat(rtkQueryErrorMiddleware),
 });
 
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
+type AppDispatch = typeof store.dispatch;
+type RootState = ReturnType<typeof store.getState>;
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
