@@ -85,7 +85,7 @@ const SignInTMPro: React.FC<SignInTMProProps> = ({ navigateTo, setInitialCompany
 	return (
 		<Box>
 			<Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
-				<Stack spacing={4}>
+				<Stack spacing={2}>
 					<Typography sx={{ fontWeight: 'bold' }} variant="h1">
 						Set up OMEGA
 					</Typography>
@@ -132,7 +132,7 @@ const SignInTMPro: React.FC<SignInTMProProps> = ({ navigateTo, setInitialCompany
 						</Grid>
 					</Grid>
 				</Stack>
-				<Stack spacing={4}>
+				<Stack spacing={2}>
 					<Typography sx={{ fontWeight: 'bold' }} variant="h3">
 						Set up your OMEGA
 					</Typography>
@@ -173,30 +173,29 @@ const SignInTMPro: React.FC<SignInTMProProps> = ({ navigateTo, setInitialCompany
 						</Grid>
 					</Grid>
 
-					<Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-						<Controller name="privacyConsent" control={control} rules={{ required: 'You must accept the privacy policy' }} render={({ field }) => <OmegaCheckbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />} />
-						<Box>
-							<Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-								We're committed to your privacy. TrolMaster uses the information you provide to us to contact you about our relevant content, products, and services. You may unsubscribe from these communications at any time. For more information, check out our{' '}
-								<Link href="#" underline="always" color="#26B2A7">
-									Privacy Policy
-								</Link>
-								.
-							</Typography>
-							{errors.privacyConsent && (
-								<Typography color="error" variant="h4" sx={{ marginTop: '4px' }}>
-									*{errors.privacyConsent.message}
-								</Typography>
-							)}
-						</Box>
-					</Box>
-
 					{responseErrorMessage && (
 						<Typography color="error" sx={{ marginTop: '10px', fontSize: '0.9rem' }}>
 							{responseErrorMessage}
 						</Typography>
 					)}
 				</Stack>
+				<Box sx={{ display: 'flex', alignItems: 'flex-start', marginTop: '30px' }}>
+					<Controller name="privacyConsent" control={control} rules={{ required: 'You must accept the privacy policy' }} render={({ field }) => <OmegaCheckbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />} />
+					<Box>
+						<Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+							We're committed to your privacy. TrolMaster uses the information you provide to us to contact you about our relevant content, products, and services. You may unsubscribe from these communications at any time. For more information, check out our{' '}
+							<Link href="#" underline="always" color="#26B2A7">
+								Privacy Policy
+							</Link>
+							.
+						</Typography>
+						{errors.privacyConsent && (
+							<Typography color="error" variant="h4" sx={{ marginTop: '4px' }}>
+								*{errors.privacyConsent.message}
+							</Typography>
+						)}
+					</Box>
+				</Box>
 				<Stack spacing={2} sx={{ marginTop: '30px' }}>
 					<Button variant="contained" color="secondary" fullWidth type="submit" loading={isLoading} disabled={!isValid || isLoading}>
 						Activate
