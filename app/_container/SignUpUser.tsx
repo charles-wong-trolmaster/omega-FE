@@ -1,56 +1,58 @@
+import { Box, Button, Stack, Typography } from '@mui/material';
+import React from 'react';
+
 interface SignUpUserProps {
-  navigateTo: (component: string) => void;
+	navigateTo: (component: string) => void;
 }
 
 const SignUpUser: React.FC<SignUpUserProps> = ({ navigateTo }) => {
-  return (
-    <div className="uk-width-large">
-      <h1 className="uk-text-capitalize uk-text-bold uk-text-warning">
-        Already a TrolMaster User?
-      </h1>
-      <div className="uk-flex uk-flex-middle ">
-        <img src="/img/tm+ProIcon.svg" alt="logo" width="80" />
-        <h2 className="uk-margin-remove uk-text-warning uk-text-bold">
-          TM+ PRO APP
-        </h2>
-      </div>
-
-      <div className="uk-margin">
-        <button
-          className="uk-button uk-button-default uk-button-large uk-width-1-1 uk-border-pill"
-          onClick={(e) => {
-            e.preventDefault();
-            navigateTo("signInTMPro");
-          }}
-        >
-          Yes
-        </button>
-      </div>
-
-      <div className="uk-margin">
-        <button
-          className="uk-button uk-button-default uk-button-large uk-width-1-1 uk-border-pill"
-          onClick={(e) => {
-            e.preventDefault();
-            navigateTo("signUpBoth");
-          }}
-        >
-          No
-        </button>
-      </div>
-
-      <div className="uk-margin">
-        <button
-          className="uk-button uk-button-primary uk-button-large uk-width-1-1 uk-border-pill"
-          onClick={(e) => {
-            e.preventDefault();
-            navigateTo("login");
-          }}
-        >
-          Back
-        </button>
-      </div>
-    </div>
-  );
+	return (
+		<Stack direction="column" spacing={5}>
+			<Typography variant="h1" sx={{ fontWeight: 'bold' }}>
+				Already a TrolMaster User?
+			</Typography>
+			<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+				<img src="/img/tm+ProIcon.svg" alt="logo" width="80" />
+				<Typography variant="h2" sx={{ fontWeight: 'bold' }}>
+					TM+ PRO APP
+				</Typography>
+			</Box>
+			<Button
+				variant="outlined"
+				size="large"
+				fullWidth
+				onClick={(e) => {
+					e.preventDefault();
+					navigateTo('signInTMPro');
+				}}
+			>
+				Yes
+			</Button>
+			<Button
+				variant="outlined"
+				size="large"
+				fullWidth
+				onClick={(e) => {
+					e.preventDefault();
+					navigateTo('signUpBoth');
+				}}
+			>
+				No
+			</Button>
+			<Button
+				variant="contained"
+				color="primary"
+				size="large"
+				fullWidth
+				onClick={(e) => {
+					e.preventDefault();
+					navigateTo('login');
+				}}
+			>
+				Back
+			</Button>
+		</Stack>
+	);
 };
+
 export default SignUpUser;

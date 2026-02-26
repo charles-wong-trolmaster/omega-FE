@@ -1,19 +1,43 @@
-import { ChangeEvent, useState } from 'react';
+'use client';
+
+import OmegaTextField from '@/components/OmegaTextfield';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import LockOutlineIcon from '@mui/icons-material/LockOutline';
+import { Box, Button, Stack, Typography } from '@mui/material';
+import { useRef } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
+interface ResetPasswordProps {
+	navigateTo: (component: string) => void;
+}
+
+interface ResetPasswordFormData {
+	password: string;
+	confirmPassword: string;
+}
 
 interface PasswordRequirement {
 	label: string;
 	test: (password: string) => boolean;
 }
 
-interface ResetPasswordProps {
-	navigateTo: (component: string) => void;
-}
-
 const ResetPassword: React.FC<ResetPasswordProps> = ({ navigateTo }) => {
-	const [showPassword, setShowPassword] = useState(false);
-	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
+	const {
+		control,
+		handleSubmit,
+		watch,
+		formState: { isValid, errors }
+	} = useForm<ResetPasswordFormData>({
+		mode: 'onSubmit',
+		defaultValues: {
+			password: '',
+			confirmPassword: ''
+		}
+	});
+	const formRef = useRef<HTMLFormElement>(null);
+
+	const passwordValue = watch('password', '');
 
 	const requirements: PasswordRequirement[] = [
 		{
@@ -34,70 +58,75 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ navigateTo }) => {
 		}
 	];
 
-	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setPassword(e.target.value);
-	};
-
-	const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setConfirmPassword(e.target.value);
+	const onSubmit = async (data: ResetPasswordFormData) => {
+		console.log(data);
 	};
 
 	return (
-		<div className="uk-width-large">
-			<div className="uk-margin">
-				<h1 className=" uk-margin-remove uk-text-bold uk-text-warning">Reset Your Password</h1>
-			</div>
-			<form>
-				<div className="uk-margin">
-					<div className="uk-margin-xsmall-bottom ">
-						<h5 className="uk-margin-remove uk-text-warning">Password *</h5>
-					</div>
-					<div className="uk-inline uk-width-1-1">
-						<span className="uk-form-icon" uk-icon="icon: lock"></span>
-						<a className="uk-form-icon uk-form-icon-flip" uk-icon={`icon: ${showPassword ? 'eye-slash' : 'eye'}`} onClick={() => setShowPassword(!showPassword)} style={{ cursor: 'pointer' }}></a>
-						<input className="uk-input uk-border-pill" placeholder="Password" type={showPassword ? 'text' : 'password'} value={password} onChange={handlePasswordChange} />
-					</div>
-				</div>
+		<Box>
+			<Box sx={{ marginBottom: '30px' }}>
+				<Typography sx={{ fontWeight: 'bold' }} variant="h1">
+					Reset Your Password
+				</Typography>
+			</Box>
+			<Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
+				<Stack spacing={5}>
+					<Box>
+						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
+							Password *
+						</Typography>
+						<Controller name="password" control={control} rules={{ required: 'Password is required' }} render={({ field }) => <OmegaTextField {...field} size="small" type="password" fullWidth startIcon={<LockOutlineIcon />} placeholder="Password" error={!!errors.password} helperText={errors.password?.message} />} />
+					</Box>
 
-				<div className="uk-margin">
-					<div className="uk-margin-xsmall-bottom ">
-						<h5 className="uk-margin-remove uk-text-warning">Confirm Password *</h5>
-					</div>
-					<div className="uk-inline uk-width-1-1">
-						<span className="uk-form-icon" uk-icon="icon: lock"></span>
-						<a className="uk-form-icon uk-form-icon-flip" uk-icon={`icon: ${showConfirmPassword ? 'eye-slash' : 'eye'}`} onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{ cursor: 'pointer' }}></a>
-						<input className="uk-input uk-border-pill" placeholder="Confirm Password" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={handleConfirmPasswordChange} />
-					</div>
-				</div>
+					<Box>
+						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
+							Confirm Password *
+						</Typography>
+						<Controller
+							name="confirmPassword"
+							control={control}
+							rules={{
+								required: 'Confirm Password is required',
+								validate: (v) => v === passwordValue || 'Passwords do not match'
+							}}
+							render={({ field }) => <OmegaTextField {...field} size="small" type="password" fullWidth startIcon={<LockOutlineIcon />} placeholder="Confirm Password" error={!!errors.confirmPassword} helperText={errors.confirmPassword?.message} />}
+						/>
+					</Box>
 
-				<div className="uk-margin">
-					<div className="uk-background-primary uk-padding-small uk-border-rounded">
-						<div className="uk-margin-small">
-							<div className="uk-margin-xsmall-bottom ">
-								<h5 className="uk-margin-remove uk-text-warning">Password must:</h5>
-							</div>
-						</div>
-						{requirements.map((requirement, index) => (
-							<div key={index} className="uk-margin-small uk-flex uk-flex-middle">
-								<span className={`uk-margin-small-right ${requirement.test(password) ? 'uk-text-secondary' : 'uk-text-danger'}`} uk-icon={`icon: ${requirement.test(password) ? 'check' : 'close'}; ratio: 0.8`}></span>
-								<span className={`uk-text-small  ${requirement.test(password) ? 'uk-text-warning' : 'uk-text-warning'}`}>{requirement.label}</span>
-							</div>
-						))}
-					</div>
-				</div>
+					<Box sx={{ backgroundColor: 'primary.main', padding: 2, borderRadius: 1 }}>
+						<Typography variant="h5" sx={{ marginBottom: '10px' }}>
+							Password must:
+						</Typography>
+						<Stack spacing={1}>
+							{requirements.map((requirement, index) => (
+								<Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+									{requirement.test(passwordValue) ? <CheckCircleOutlineIcon color="secondary" fontSize="small" /> : <CancelOutlinedIcon color="error" fontSize="small" />}
+									<Typography variant="body2">{requirement.label}</Typography>
+								</Box>
+							))}
+						</Stack>
+					</Box>
+				</Stack>
 
-				<div className="uk-margin">
-					<button
-						className="uk-button uk-button-secondary uk-button-large uk-width-1-1 uk-border-pill"
+				<Stack spacing={2} sx={{ marginTop: '30px' }}>
+					<Button variant="contained" color="secondary" fullWidth type="submit" disabled={!isValid}>
+						Confirm
+					</Button>
+					<Button
+						variant="contained"
+						fullWidth
+						type="button"
 						onClick={(e) => {
 							e.preventDefault();
+							navigateTo('login');
 						}}
 					>
-						Confirm
-					</button>
-				</div>
-			</form>
-		</div>
+						Back
+					</Button>
+				</Stack>
+			</Box>
+		</Box>
 	);
 };
+
 export default ResetPassword;

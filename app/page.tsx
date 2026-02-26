@@ -8,21 +8,31 @@ import SignInTMPro from '@/app/_container/SignInTMPro';
 import SignUpEmail from '@/app/_container/SignUpEmail';
 import SignUpUser from '@/app/_container/SignUpUser';
 import SignUpVerify from '@/app/_container/SignUpVerify';
-import TMProForgot from '@/app/_container/TMProForgotPassword';
-import { Container } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import TMProForgotPassword from '@/app/_container/TMProForgotPassword';
+import { Box, Container, Stack } from '@mui/material';
 import { useState } from 'react';
 import AllSet from './_container/AllSet';
 import JoinTrolMasterSetupOmega from './_container/JoinTrolMasterSetupOmega';
 
 const LoginPage = () => {
-	const [activeComponent, setActiveComponent] = useState('login');
+	const [activeComponent, setActiveComponent] = useState('setUpVerify');
 	const [registerData, setRegisterData] = useState<any>(null);
 	const [initialCompanyId, setInitialCompanyId] = useState<string>('');
 
-	// Navigation handler
 	const navigateTo = (component: string) => {
 		setActiveComponent(component);
+	};
+
+	const getComponentMaxWidth = () => {
+		switch (activeComponent) {
+			case 'signUpBoth':
+			case 'signInTMPro':
+			case 'allSet':
+				return 720;
+
+			default:
+				return 450;
+		}
 	};
 
 	const renderComponent = () => {
@@ -32,7 +42,7 @@ const LoginPage = () => {
 			case 'forgot':
 				return <OmegaForgot navigateTo={navigateTo} />;
 			case 'forgotTMPro':
-				return <TMProForgot navigateTo={navigateTo} />;
+				return <TMProForgotPassword navigateTo={navigateTo} />;
 			case 'reset':
 				return <ResetPassword navigateTo={navigateTo} />;
 			case 'signUpUser':
@@ -56,13 +66,16 @@ const LoginPage = () => {
 
 	return (
 		<div className="login-background">
-			<Grid container spacing={2}>
-				<Grid size={4}></Grid>
-				<Grid size={4}>
-					<Container style={{ display: 'flex', justifyContent: 'center' }}>{renderComponent()}</Container>
-				</Grid>
-				<Grid size={4}></Grid>
-			</Grid>
+			<Container sx={{ paddingTop: '80px', paddingBottom: '80px' }}>
+				<Box sx={{ maxWidth: getComponentMaxWidth(), mx: 'auto', width: '100%' }}>
+					<Stack spacing={5}>
+						<Box>
+							<img src="/img/trolmasterLogo.svg" alt="" />
+						</Box>
+						<Box>{renderComponent()}</Box>
+					</Stack>
+				</Box>
+			</Container>
 		</div>
 	);
 };
