@@ -4,7 +4,9 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
@@ -16,6 +18,7 @@ import Grow from "@mui/material/Grow";
 import AdbIcon from "@mui/icons-material/Adb";
 import theme from "@/styles/theme";
 import Divider from "@mui/material/Divider";
+import { ListItemIcon, ListItemText } from "@mui/material";
 
 const DAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 const MONTHS = [
@@ -47,12 +50,27 @@ const formatDateTime = (date: Date): string => {
   return `${day}, ${dateNum} ${month} ${year}, ${hours}:${minutes} ${ampm}`;
 };
 
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const navButtonSx = {
+  fontSize: theme.typography.h4.fontSize,
+  fontWeight: "normal",
+  "&:hover": { color: theme.palette.secondary.main },
+};
+
+const facilitySettings = [
+  "Facility A",
+  "Facility B",
+  "Facility C",
+  "Manage Facilities",
+];
 
 function OmegaAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [facilityAnchorEl, setFacilityAnchorEl] =
+    React.useState<null | HTMLElement>(null);
   const [now, setNow] = React.useState<Date>(new Date());
+
   const open = Boolean(anchorEl);
+  const facilityOpen = Boolean(facilityAnchorEl);
 
   // ✅ Tick every second to keep the time live
   React.useEffect(() => {
@@ -60,6 +78,7 @@ function OmegaAppBar() {
     return () => clearInterval(timer);
   }, []);
 
+  // ─── Avatar menu handlers ───────────────────────────────────────────────────
   const handleToggle = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -70,15 +89,33 @@ function OmegaAppBar() {
 
   React.useEffect(() => {
     if (!open) return;
-
     const handleDocumentClick = (event: MouseEvent) => {
       if (anchorEl && anchorEl.contains(event.target as Node)) return;
       setAnchorEl(null);
     };
-
     document.addEventListener("mousedown", handleDocumentClick);
     return () => document.removeEventListener("mousedown", handleDocumentClick);
   }, [open, anchorEl]);
+
+  // ─── Facility menu handlers ─────────────────────────────────────────────────
+  const handleFacilityToggle = (event: React.MouseEvent<HTMLElement>) => {
+    setFacilityAnchorEl(facilityAnchorEl ? null : event.currentTarget);
+  };
+
+  const handleFacilityClose = () => {
+    setFacilityAnchorEl(null);
+  };
+
+  React.useEffect(() => {
+    if (!facilityOpen) return;
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (facilityAnchorEl && facilityAnchorEl.contains(event.target as Node))
+        return;
+      setFacilityAnchorEl(null);
+    };
+    document.addEventListener("mousedown", handleDocumentClick);
+    return () => document.removeEventListener("mousedown", handleDocumentClick);
+  }, [facilityOpen, facilityAnchorEl]);
 
   return (
     <AppBar position="static">
@@ -86,44 +123,16 @@ function OmegaAppBar() {
         <img src="/img/trolmasterLogo.svg" alt="" height="40px" />
 
         <Box sx={{ flexGrow: 1, display: "flex", marginLeft: "20px" }}>
-          <Button
-            sx={{
-              fontSize: theme.typography.h4.fontSize,
-              fontWeight: "normal",
-              "&:hover": { color: theme.palette.secondary.main },
-            }}
-            startIcon={<AdbIcon />}
-          >
+          <Button sx={navButtonSx} startIcon={<AdbIcon />}>
             Grow Room
           </Button>
-          <Button
-            sx={{
-              fontSize: theme.typography.h4.fontSize,
-              fontWeight: "normal",
-              "&:hover": { color: theme.palette.secondary.main },
-            }}
-            startIcon={<AdbIcon />}
-          >
+          <Button sx={navButtonSx} startIcon={<AdbIcon />}>
             Cultivation
           </Button>
-          <Button
-            sx={{
-              fontSize: theme.typography.h4.fontSize,
-              fontWeight: "normal",
-              "&:hover": { color: theme.palette.secondary.main },
-            }}
-            startIcon={<AdbIcon />}
-          >
+          <Button sx={navButtonSx} startIcon={<AdbIcon />}>
             Task
           </Button>
-          <Button
-            sx={{
-              fontSize: theme.typography.h4.fontSize,
-              fontWeight: "normal",
-              "&:hover": { color: theme.palette.secondary.main },
-            }}
-            startIcon={<AdbIcon />}
-          >
+          <Button sx={navButtonSx} startIcon={<AdbIcon />}>
             Data Analytic
           </Button>
         </Box>
@@ -131,7 +140,6 @@ function OmegaAppBar() {
         <Box
           sx={{ display: "flex", alignItems: "center", flexGrow: 0, gap: 1 }}
         >
-          {/* ✅ Live clock replacing John Doe */}
           <Typography
             variant="h4"
             sx={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}
@@ -146,17 +154,28 @@ function OmegaAppBar() {
             sx={{ borderColor: theme.palette.primary.contrastText, mx: 1 }}
           />
 
+          {/* ─── Facility Button + Popper ─────────────────────────────────── */}
           <Button
-            sx={{
-              fontSize: theme.typography.h4.fontSize,
-              fontWeight: "normal",
-              "&:hover": { color: theme.palette.secondary.main },
-            }}
+            sx={navButtonSx}
             startIcon={<AdbIcon />}
+            onClick={handleFacilityToggle}
           >
             Facility
           </Button>
 
+          <Popper open={facilityOpen} anchorEl={facilityAnchorEl}>
+            <Paper elevation={3}>
+              <MenuList>
+                {facilitySettings.map((facility) => (
+                  <MenuItem key={facility} onClick={handleFacilityClose}>
+                    <Typography>{facility}</Typography>
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Paper>
+          </Popper>
+
+          {/* ─── Avatar + Popper ──────────────────────────────────────────── */}
           <IconButton onClick={handleToggle}>
             <Avatar
               alt="Remy Sharp"
@@ -171,29 +190,27 @@ function OmegaAppBar() {
             <LogoutIcon />
           </IconButton>
 
-          <Popper
-            open={open}
-            anchorEl={anchorEl}
-            placement="bottom-end"
-            transition
-            disablePortal
-          >
-            {({ TransitionProps }) => (
-              <Grow
-                {...TransitionProps}
-                style={{ transformOrigin: "top right" }}
-              >
-                <Paper elevation={3}>
-                  <MenuList>
-                    {settings.map((setting) => (
-                      <MenuItem key={setting} onClick={handleClose}>
-                        <Typography>{setting}</Typography>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Paper>
-              </Grow>
-            )}
+          <Popper open={open} anchorEl={anchorEl}>
+            <Paper elevation={3}>
+              <MenuList>
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <AccountCircleIcon
+                      sx={{ color: theme.palette.primary.contrastText }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="Profile" />
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <AdminPanelSettingsIcon
+                      sx={{ color: theme.palette.primary.contrastText }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="Admin Panel" />
+                </MenuItem>
+              </MenuList>
+            </Paper>
           </Popper>
         </Box>
       </Toolbar>
