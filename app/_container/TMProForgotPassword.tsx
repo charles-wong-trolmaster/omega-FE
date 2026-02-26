@@ -1,56 +1,93 @@
 'use client';
 
+import OmegaTextField from '@/components/OmegaTextfield';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import { Box, Button, Link, Stack, Typography } from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
+
 interface ForgotProps {
 	navigateTo: (component: string) => void;
 }
 
+interface ForgotFormData {
+	email: string;
+}
+
 const TMProForgotPassword: React.FC<ForgotProps> = ({ navigateTo }) => {
+	const {
+		control,
+		handleSubmit,
+		formState: { isValid, errors }
+	} = useForm<ForgotFormData>({
+		mode: 'onSubmit',
+		defaultValues: {
+			email: ''
+		}
+	});
+
+	const onSubmit = async (data: ForgotFormData) => {
+		console.log(data);
+	};
+
 	return (
-		<div className="uk-width-large">
-			<h1 className="uk-h1 uk-text-bold uk-text-warning">Forgot Password</h1>
+		<Box>
+			<Box sx={{ marginBottom: '30px' }}>
+				<Typography sx={{ fontWeight: 'bold' }} variant="h1">
+					Forgot Password
+				</Typography>
+			</Box>
 
-			<div>
-				<p className="uk-margin uk-text-warning uk-text-bold">
-					Please provide the email address that you used when signed up for your account. If you forgot your email. Please{' '}
-					<a href="#" className="uk-text-secondary">
-						<u>contact us</u>
-					</a>
-					.
-				</p>
+			<Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%' }}>
+				<Stack spacing={5}>
+					<Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+						Please provide the email address that you used when signed up for your account. If you forgot your email, please{' '}
+						<Link href="#" underline="always" color="#26B2A7">
+							contact us
+						</Link>
+						.
+					</Typography>
 
-				<div className="uk-margin">
-					<h5 className="uk-text-warning uk-margin-xsmall-bottom">Email *</h5>
-					<div className="uk-inline uk-width-1-1 ">
-						<span className="uk-form-icon" uk-icon="icon: mail"></span>
-						<input className="uk-input uk-border-pill" placeholder="Email" type="email" />
-					</div>
-				</div>
+					<Box>
+						<Typography variant="h5" sx={{ marginBottom: '5px' }}>
+							Email *
+						</Typography>
+						<Controller
+							name="email"
+							control={control}
+							rules={{
+								required: 'Email is required',
+								pattern: {
+									value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+									message: 'Invalid email address'
+								}
+							}}
+							render={({ field }) => <OmegaTextField {...field} startIcon={<MailOutlineIcon />} size="small" fullWidth placeholder="Email" error={!!errors.email} helperText={errors.email?.message} />}
+						/>
+					</Box>
 
-				<p className="uk-margin uk-text-warning uk-text-bold">{'You will receive a link create a new password via e-mail.'}</p>
+					<Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+						You will receive a link to create a new password via e-mail.
+					</Typography>
+				</Stack>
 
-				<div>
-					<button
-						className="uk-button uk-button-secondary uk-button-large uk-width-1-1 uk-border-pill"
-						onClick={(e) => {
-							e.preventDefault();
-						}}
-					>
+				<Stack spacing={2} sx={{ marginTop: '30px' }}>
+					<Button variant="contained" color="secondary" fullWidth type="submit" disabled={!isValid}>
 						Confirm
-					</button>
-				</div>
-				<div className="uk-margin">
-					<button
-						className="uk-button uk-button-primary uk-button-large uk-width-1-1 uk-border-pill"
+					</Button>
+					<Button
+						variant="contained"
+						fullWidth
+						type="button"
 						onClick={(e) => {
 							e.preventDefault();
 							navigateTo('signInTMPro');
 						}}
 					>
 						Back
-					</button>
-				</div>
-			</div>
-		</div>
+					</Button>
+				</Stack>
+			</Box>
+		</Box>
 	);
 };
 
