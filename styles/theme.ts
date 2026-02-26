@@ -2,6 +2,8 @@
 
 import { createTheme } from "@mui/material/styles";
 
+// ✅ Removed unused MusicVideoOutlined import
+
 let theme = createTheme({
   palette: {
     primary: {
@@ -18,24 +20,12 @@ let theme = createTheme({
     allVariants: {
       color: "#FFFFFF",
     },
-    h1: {
-      fontSize: "40px",
-    },
-    h2: {
-      fontSize: "24px",
-    },
-    h3: {
-      fontSize: "20px",
-    },
-    h4: {
-      fontSize: "16px",
-    },
-    h5: {
-      fontSize: "14px",
-    },
-    h6: {
-      fontSize: "12px",
-    },
+    h1: { fontSize: "40px" },
+    h2: { fontSize: "24px" },
+    h3: { fontSize: "20px" },
+    h4: { fontSize: "16px" },
+    h5: { fontSize: "14px" },
+    h6: { fontSize: "12px" },
   },
 });
 
@@ -83,6 +73,7 @@ export default theme = createTheme(theme, {
         root: {
           textTransform: "none",
           borderRadius: "999px",
+          color: theme.palette.primary.contrastText,
           "&.Mui-disabled": {
             background: "transparent",
             border: "1px solid #C8D0D0",
@@ -111,6 +102,24 @@ export default theme = createTheme(theme, {
               },
             },
           },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText,
+          "& .MuiMenuItem-root:hover": {
+            backgroundColor: theme.palette.primary.dark,
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: theme.palette.primary.contrastText,
         },
       },
     },
